@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>You have been logged out</h2>
+    <p>See you again soon 👋</p>
+
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Go to Home</a>
+    <a href="{% url 'account:login' %}" class="btn btn-outline-secondary mt-3">
+        Login Again
+    </a>
+</div>
+{% endblock %}

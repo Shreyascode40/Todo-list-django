@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}To-Do List{% endblock %}
+
+{% block content %}
+
+
+<ul class="list-group">
+  {% for todo in lists %}
+    <li class="list-group-item d-flex align-items-center justify-content-between">
+      
+      <div>
+        <input
+          class="form-check-input me-2"
+          type="checkbox"
+          id="todo-{{ todo.pk }}"
+        >
+        <label class="form-check-label" for="todo-{{ todo.pk }}">
+          {{ todo.title }}
+        </label>
+      </div>
+
+      <div>
+        <a href="{% url 'todo_update' todo.pk %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-sm btn-danger">Delete</a>
+      </div>
+
+    </li>
+  {% empty %}
+    <li class="list-group-item text-center text-muted">
+      No tasks added yet
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

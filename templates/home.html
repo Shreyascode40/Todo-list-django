@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- NAVBAR -->
+<div class="navi">
+  <nav>
+    <div id="logo">
+      <img src="{% static 'image/original-cc59a15f241958936a64fefbc453f6a9.webp' %}" alt="logo">
+    </div>
+
+    <div id="nav-item">
+      <ul>
+        <li><a href="{% url 'todo:tracker' %}">Tracker</a></li>
+      </ul>
+
+      <div id="nav-log">
+        {% if user.is_authenticated %}
+          <span class="me-3">Welcome, {{ user.username }}</span>
+
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Logout</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+
+  <!-- LEFT SIDE (CLOCK / INFO) -->
+  <div id="sidebar">
+    <div class="container">
+
+      <!-- ANALOG CLOCK -->
+      <div class="analog-clock" id="analogClock">
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+
+        <div class="clock-number" style="transform: rotate(0deg);">
+          <span>12</span>
+        </div>
+        <div class="clock-number" style="transform: rotate(90deg);">
+          <span>3</span>
+        </div>
+        <div class="clock-number" style="transform: rotate(180deg);">
+          <span>6</span>
+        </div>
+        <div class="clock-number" style="transform: rotate(270deg);">
+          <span>9</span>
+        </div>
+      </div>
+
+      <!-- DIGITAL CLOCK -->
+      <div class="digital-clock">
+        <div class="time" id="time">00:00:00</div>
+        <div class="date" id="date">Loading...</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE (TASKS) -->
+  <div class="content-area">
+
+    <div class="task-layout">
+      <h2>Task Lists</h2>
+
+      <a href="{% url 'todo:todo_create' %}" class="btn-newtask">
+        + New Task
+      </a>
+
+      <div class="task-list">
+        <ul id="task-list-left">
+
+          {% for todo in lists %}
+          <li class="task-item">
+
+            <!-- LEFT: CHECK + TEXT -->
+            <div>
+              <form method="post"
+                    action="{% url 'todo:todo_complete' todo.pk %}"
+                    class="d-inline">
+                {% csrf_token %}
+                <input
+                  type="checkbox"
+                  onchange="this.form.submit()"
+                  class="form-check-input me-2">
+              </form>
+
+              <span class="task-text">
+                {{ todo.task }}
+              </span>
+
+              {% if todo.reminder_date %}
+              <br>
+              <small class="text-muted">
+                {{ todo.reminder_date }}
+                {% if todo.reminder_time %}
+                  at {{ todo.reminder_time }}
+                {% endif %}
+              </small>
+              {% endif %}
+            </div>
+
+            <!-- RIGHT: ACTIONS -->
+            <div class="task-actions">
+              <a href="{% url 'todo:todo_update' todo.pk %}"
+                class="btn btn-sm btn-warning">
+                Edit
+              </a>
+
+              <form method="post"
+                    action="{% url 'todo:todo_delete' todo.pk %}"
+                    class="d-inline"
+                    onsubmit="return confirm('Delete this task?');">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-sm btn-danger">
+                  Delete
+                </button>
+              </form>
+            </div>
+
+          </li>
+
+          {% empty %}
+          <li class="list-group-item">
+            No tasks yet. Create one!
+          </li>
+          {% endfor %}
+
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
