@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "todo_project/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "todo_project/wsgi.py"
+    }
+  ]
+}
