@@ -15,13 +15,14 @@
     <div id="nav-item">
       <ul>
         <li><a href="{% url 'todo:tracker' %}">Tracker</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
       </ul>
 
       <div id="nav-log">
         {% if user.is_authenticated %}
           <span class="me-3">Welcome, {{ user.username }}</span>
 
-          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+          <form method="post" action="{% url 'account:logout' %}" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="btn btn-link">Logout</button>
           </form>

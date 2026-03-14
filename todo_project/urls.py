@@ -19,12 +19,17 @@ from django.urls import path
 from django.urls import include
 from django.contrib.auth.views import LogoutView
 from account import views as account_views
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls), 
     path('account/',include('account.urls')),
     path('', account_views.home, name='home'),
     path('todo/', include('todo.urls')),
-    path('logout/', LogoutView.as_view(template_name='account/logout.html'), name='logout'),
-    path('login/', account_views.login_view, name='login'),
-    path('',include('django.contrib.auth.urls'))
 ]
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

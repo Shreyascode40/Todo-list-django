@@ -1,18 +1,192 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login - Todo App{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width:400px;">
-  <h3 class="text-center">Login</h3>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <img src="{% static 'image/original-cc59a15f241958936a64fefbc453f6a9.webp' %}" alt="Logo">
+            </div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to manage your tasks</p>
+        </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary w-100">Login</button>
-  </form>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-error">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-  <p class="mt-3 text-center">
-    If you don't have an account
-    <a href="{% url 'account:register' %}">Register</a>
-  </p>
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control" placeholder="Enter your username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn btn-auth">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{% url 'account:register' %}">Create one</a></p>
+        </div>
+    </div>
 </div>
+
+<style>
+    .auth-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    }
+
+    .auth-card {
+        background: white;
+        border-radius: 24px;
+        padding: 50px 40px;
+        box-shadow: 0 20px 60px rgba(255, 107, 53, 0.15);
+        width: 100%;
+        max-width: 420px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .auth-logo img {
+        height: 80px;
+        width: auto;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 4px 8px rgba(255, 107, 53, 0.3));
+    }
+
+    .auth-header h1 {
+        color: #333;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .auth-header p {
+        color: #888;
+        font-size: 15px;
+    }
+
+    .auth-form {
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e1e5ea;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #fafbfc;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        background: white;
+    }
+
+    .form-control::placeholder {
+        color: #bbb;
+    }
+
+    .btn-auth {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-auth:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    .alert {
+        padding: 14px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .alert-error {
+        background: #fff0f0;
+        border: 1px solid #ffcccc;
+        color: #dc3545;
+    }
+
+    .auth-footer {
+        text-align: center;
+        color: #888;
+        font-size: 14px;
+    }
+
+    .auth-footer a {
+        color: #ff6b35;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 {% endblock %}

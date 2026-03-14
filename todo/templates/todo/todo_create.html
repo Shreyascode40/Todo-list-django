@@ -1,16 +1,272 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Create Todo{% endblock %}
+{% block title %}Add New Task - Todo App{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Create Todo</h2>
+<div class="navi">
+  <nav>
+    <div id="logo">
+      <img src="{% static 'image/original-cc59a15f241958936a64fefbc453f6a9.webp' %}" alt="logo">
+    </div>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Save</button>
-    <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
-  </form>
+    <div id="nav-item">
+      <ul>
+        <li><a href="{% url 'todo:tracker' %}">Tracker</a></li>
+        <li><a href="{% url 'home' %}">Home</a></li>
+      </ul>
+
+      <div id="nav-log">
+        {% if user.is_authenticated %}
+          <span class="me-3">Welcome, {{ user.username }}</span>
+
+          <form method="post" action="{% url 'account:logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link">Logout</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
 </div>
+
+<div class="task-form-container">
+    <div class="task-form-card">
+        <div class="task-form-header">
+            <h1>Add New Task</h1>
+            <p>Create a new task to stay organized</p>
+        </div>
+
+        <form method="post" class="task-form">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-error">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_task">Task Title</label>
+                <input type="text" name="task" id="id_task" class="form-control" placeholder="What needs to be done?" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Description (Optional)</label>
+                <textarea name="description" id="id_description" class="form-control" rows="3" placeholder="Add more details about this task..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="id_reminder_date">Reminder Date</label>
+                    <input type="date" name="reminder_date" id="id_reminder_date" class="form-control">
+                </div>
+
+                <div class="form-group half">
+                    <label for="id_reminder_time">Reminder Time</label>
+                    <input type="time" name="reminder_time" id="id_reminder_time" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">
+                    <span>+ Save Task</span>
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .task-form-container {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    }
+
+    .task-form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 50px 40px;
+        box-shadow: 0 20px 60px rgba(255, 107, 53, 0.15);
+        width: 100%;
+        max-width: 550px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .task-form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .task-form-header h1 {
+        color: #333;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #ff6b35 0%, #ff4500 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .task-form-header p {
+        color: #888;
+        font-size: 15px;
+    }
+
+    .task-form {
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e1e5ea;
+        border-radius: 12px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #fafbfc;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #ff6b35;
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+        background: white;
+    }
+
+    .form-control::placeholder {
+        color: #bbb;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-group.half {
+        flex: 1;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn-save {
+        flex: 1;
+        padding: 16px;
+        background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    .btn-cancel {
+        padding: 16px 30px;
+        background: white;
+        color: #666;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-cancel:hover {
+        border-color: #ff6b35;
+        color: #ff6b35;
+    }
+
+    .alert {
+        padding: 14px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .alert-error {
+        background: #fff0f0;
+        border: 1px solid #ffcccc;
+        color: #dc3545;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .task-form-card {
+            padding: 30px 25px;
+        }
+
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-cancel {
+            order: 2;
+        }
+    }
+</style>
 {% endblock %}

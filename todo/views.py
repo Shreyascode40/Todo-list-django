@@ -19,7 +19,7 @@ import json
 def todo_list(request):
     print("Todo List View Accessed")
 
-    todos = TodoItem.objects.all().order_by('-created_at')
+    todos = TodoItem.objects.filter(user=request.user).order_by('-created_at')
     lists = todos.filter(is_completed=False)
 
     total_task = todos.count()
@@ -42,7 +42,9 @@ def todo_create(request):
     if request.method == 'POST':
         form = TodoForm(request.POST)
         if form.is_valid():
-            form.save()
+            todo = form.save(commit=False)
+            todo.user = request.user
+            todo.save()
             return redirect('home')
     else:
         form = TodoForm()
@@ -50,12 +52,12 @@ def todo_create(request):
 
 @login_required
 def todo_update(request,pk):
-    todo = get_object_or_404(TodoItem,pk=pk)
+    todo = get_object_or_404(TodoItem, pk=pk, user=request.user)
     if request.method == 'POST':
         form = TodoForm(request.POST, instance=todo)
         if form.is_valid():
             form.save()
-            return redirect('todo:todo_list')
+            return redirect('home')
     else:
         form = TodoForm(instance=todo)
     return render(request, 'todo/todo_update.html', {'form': form})
@@ -63,7 +65,7 @@ def todo_update(request,pk):
 
 @login_required
 def todo_delete(request, pk):
-    todo = get_object_or_404(TodoItem,pk=pk)
+    todo = get_object_or_404(TodoItem, pk=pk, user=request.user)
     if request.method == 'POST':
         todo.delete()
         return redirect('home')
@@ -72,7 +74,7 @@ def todo_delete(request, pk):
 @login_required
 @require_POST
 def todo_complete(request, pk):
-    todo = get_object_or_404(TodoItem, pk=pk)
+    todo = get_object_or_404(TodoItem, pk=pk, user=request.user)
 
     if not todo.is_completed:
         todo.is_completed = True
@@ -80,7 +82,7 @@ def todo_complete(request, pk):
         todo.save()
 
 
-    return redirect('todo:todo_list')
+    return redirect('home')
     
 
 
@@ -91,34 +93,34 @@ def tracker_view(request):
     month_start = today.replace(day=1)
     year = today.year
 
-    # ✅ TOTAL COMPLETED (USER-SPECIFIC)
+    #  TOTAL COMPLETED (USER-SPECIFIC)
     total_completed = TodoItem.objects.filter(
         user=request.user,
         is_completed=True
     ).count()
 
-    # ✅ DAILY
+    #  DAILY
     daily_done = TodoItem.objects.filter(
         user=request.user,
         is_completed=True,
         completed_at__date=today
     ).count()
 
-    # ✅ WEEKLY
+    #  WEEKLY
     weekly_done = TodoItem.objects.filter(
         user=request.user,
         is_completed=True,
         completed_at__date__gte=week_start
     ).count()
 
-    # ✅ MONTHLY
+    #  MONTHLY
     monthly_done = TodoItem.objects.filter(
         user=request.user,
         is_completed=True,
         completed_at__date__gte=month_start
     ).count()
 
-    # ✅ YEARLY GRAPH (USER-SPECIFIC)
+    #  YEARLY GRAPH (USER-SPECIFIC)
     yearly_data = (
         TodoItem.objects
         .filter(
@@ -135,7 +137,7 @@ def tracker_view(request):
     months = [item['month'].strftime('%b') for item in yearly_data]
     counts = [item['count'] for item in yearly_data]
 
-    # ✅ COMPLETED TASK HISTORY (USER-SPECIFIC)
+    #  COMPLETED TASK HISTORY (USER-SPECIFIC)
     completed_tasks = TodoItem.objects.filter(
         user=request.user,
         is_completed=True

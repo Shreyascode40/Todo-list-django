@@ -18,7 +18,7 @@ def register_view(request):
         if form.is_valid():
             user=form.save()
             login(request,user)
-            return redirect("account:login")
+            return redirect("home")
     else:
         form = UserCreationForm()
 
@@ -39,9 +39,9 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("login")
+    return redirect("account:login")
 
 
-@login_required(login_url="login")
+@login_required(login_url="account:login")
 def home(request):
     return render(request, "home.html")

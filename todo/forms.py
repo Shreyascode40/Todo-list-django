@@ -7,7 +7,7 @@ class TodoForm(forms.ModelForm):
         model = TodoItem
         fields = ['task', 'description', 'reminder_date', 'reminder_time', 'is_completed']
 
-        wightsets = {
+        widgets = {
             'reminder_date': forms.DateInput(attrs={'type': 'date'}),
             'reminder_time': forms.TimeInput(attrs={'type': 'time'}),
         }
