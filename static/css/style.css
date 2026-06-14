@@ -117,6 +117,7 @@ body {
     margin: 30px auto;
     padding: 0 20px;
     align-items: flex-start;
+    z-index: -1000;
 }
 
 /* Sidebar with Clock - Fixed Position */

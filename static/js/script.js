@@ -31,23 +31,3 @@ function updateClock() {
         updateClock();
         setInterval(updateClock, 1000);
         console.log("JS connected successfully!");
-
-
-
-// task animation 
-new Chart(document.getElementById('yearChart'), {
-    type: 'bar',
-    data: {
-        labels: JSON.parse(document.getElementById('yearChart').dataset.months),
-        datasets:[{
-            label: `Tasks Completed in ${document.getElementById('yearChart').dataset.year}`,
-            data: JSON.parse(document.getElementById('yearChart').dataset.counts),
-            backgroundColor: '#ff7a18'
-        }]
-    },
-    options: {
-        scales: {
-            y: { beginAtZero: true }
-        }
-    }
-});
